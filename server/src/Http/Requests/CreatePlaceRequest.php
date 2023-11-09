@@ -29,7 +29,6 @@ class CreatePlaceRequest extends FleetbaseRequest
     {
         return [
             'name'     => [Rule::requiredIf($this->isMethod('POST'))],
-            'street1'  => [Rule::requiredIf($this->isMethod('POST'))],
             'customer' => ['nullable', new ExistsInAny(['vendors', 'contacts'], 'public_id')],
             'contact'  => ['nullable', new ExistsInAny(['vendors', 'contacts'], 'public_id')],
             'vendor'   => 'nullable|exists:vendors,public_id',

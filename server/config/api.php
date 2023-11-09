@@ -17,6 +17,28 @@ $defaultFlow = [
         'color' => 'green',
         'events' => [
             [
+                'status' => 'Driver acknowledged',
+                'details' => 'Driver acknowledged the order',
+                'code' => 'driver_ack',
+            ],
+        ]
+    ],
+    'driver_ack' => [
+        'sequence' => 0,
+        'color' => 'green',
+        'events' => [
+            [
+                'status' => 'Driver pickedup',
+                'details' => 'Driver picked up the order',
+                'code' => 'driver_pickedup',
+            ],
+        ]
+    ],
+    'driver_pickedup' => [
+        'sequence' => 0,
+        'color' => 'green',
+        'events' => [
+            [
                 'status' => 'Driver en-route',
                 'details' => 'Driver en-route to location',
                 'code' => 'driver_enroute',
@@ -179,44 +201,6 @@ return [
 
         'order' => [
             [
-                'name' => 'Transport',
-                'description' => 'Operational flow for standard A to B transport.',
-                'key' => 'default',
-                'meta_type' => 'order_config',
-                'meta' => [
-                    'flow' => $defaultFlow,
-                ],
-            ],
-            [
-                'name' => 'Parcel Delivery',
-                'description' => 'Operational flow for standard A to B parcel delivery, with proof of delivery options.',
-                'key' => 'parcel',
-                'meta_type' => 'order_config',
-                'meta' => [
-                    'flow' => $defaultFlow,
-                    'require_pod' => true,
-                    'pod_method' => 'signature', // scan / signature
-                ],
-            ],
-            [
-                'name' => 'Passenger Transport',
-                'description' => 'Operational flow for standard A to B passenger transport.',
-                'key' => 'passenger',
-                'meta_type' => 'order_config',
-                'meta' => [
-                    'flow' => $defaultFlow,
-                ],
-            ],
-            [
-                'name' => 'Task',
-                'description' => 'Operational flow for custom task or service tasks.',
-                'key' => 'task',
-                'meta_type' => 'order_config',
-                'meta' => [
-                    'flow' => $defaultFlow,
-                ],
-            ],
-            [
                 'name' => 'Food Delivery',
                 'description' => 'Operational flow for food delivery.',
                 'key' => 'food',
@@ -231,485 +215,62 @@ return [
                 'key' => 'ecommerce',
                 'meta_type' => 'order_config',
                 'meta' => [
-                    'flow' => $defaultFlow,
-                ],
-            ],
-            [
-                'name' => 'Haulage',
-                'description' => 'Operational flow for freight container transport.',
-                'key' => 'haul',
-                'meta_type' => 'order_config',
-                'meta' => [
                     'fields' => [
                         [
-                            'label' => 'BL Number',
-                            'key' => 'bl_number',
-                            'type' => 'text',
-                            'removable' => false,
-                            'required' => true,
-                            'group' => 'info',
+                            'key' => 'customername', 
+                            'label' => 'CustomerName', 
+                            'type' => 'text' 
+                        ], 
+                        [
+                            'key' => 'cash', 
+                            'label' => 'Cash', 
+                            'type' => 'text' 
+                            ], 
+                        [
+                            'key' => 'additionaldetail', 
+                            'label' => 'AdditionalDetail', 
+                            'type' => 'text' 
                         ],
                         [
-                            'label' => 'Job Type',
-                            'key' => 'job_type',
-                            'type' => 'select',
-                            'options' => [
-                                [
-                                    'value' => 'import'
-                                ],
-                                [
-                                    'value' => 'export'
-                                ],
-                                [
-                                    'value' => 'one_way'
-                                ]
-                            ],
-                            'removable' => false,
-                            'required' => true,
-                            'group' => 'info',
+                            'key' => 'customerPhone',
+                            'label' => 'Customer Phone',
+                            'type' => 'text'
                         ],
                         [
-                            'label' => 'DSTN Port',
-                            'key' => 'dstn_port',
-                            'type' => 'port',
-                            'serialize' => 'model:port',
-                            'removable' => false,
-                            'required' => true,
-                            'group' => 'info',
+                            'key' => 'extra',
+                            'label' => 'Extra Detail',
+                            'type' => 'text'
                         ],
                         [
-                            'label' => 'Vessel',
-                            'key' => 'vessel',
-                            'type' => 'vessel',
-                            'serialize' => 'model:vessel',
-                            'removable' => false,
-                            'required' => true,
-                            'group' => 'vessel',
+                            'key' => 'storeName',
+                            'label' => 'Store Name',
+                            'type' => 'text'
                         ],
                         [
-                            'label' => 'Vessel ETA',
-                            'key' => 'vessel_eta',
-                            'type' => 'datetime',
-                            'removable' => false,
-                            'required' => true,
-                            'group' => 'vessel',
+                            'key' => 'storePhone',
+                            'label' => 'Store Phone',
+                            'type' => 'text'
                         ],
                         [
-                            'label' => 'Vessel ETD',
-                            'key' => 'vessel_etd',
-                            'type' => 'datetime',
-                            'removable' => false,
-                            'required' => true,
-                            'group' => 'vessel',
+                            'key' => 'location',
+                            'label' => 'location',
+                            'type' => 'text'
                         ],
                         [
-                            'label' => 'Voyage Number',
-                            'key' => 'voyage_number',
-                            'type' => 'text',
-                            'removable' => false,
-                            'required' => true,
-                            'group' => 'vessel',
+                            'key' => 'katchOrderId',
+                            'label' => 'Katch Order Id',
+                            'type' => 'text'
                         ],
+                        [
+                            'key' => 'orderNumber',
+                            'label' => 'Order Number',
+                            'type' => 'text'
+                        ]
+    
                     ],
-                    'flow' => [
-                        'created' => [
-                            'sequence' => 0,
-                            'color' => 'green',
-                            'events' => [
-                                [
-                                    'if' => [['meta.job_type', '=', 'import']],
-                                    'status' => 'In port',
-                                    'details' => 'Driver has entered the port',
-                                    'code' => 'driver_started',
-                                ],
-                                [
-                                    'if' => [['meta.job_type', '=', 'export']],
-                                    'status' => 'In depot',
-                                    'details' => 'Driver has entered the depot',
-                                    'code' => 'driver_started',
-                                ],
-                                [
-                                    'if' => [['meta.job_type', '=', 'one_way']],
-                                    'status' => 'Container picked up',
-                                    'details' => 'Driver has picked up the container',
-                                    'code' => 'driver_started',
-                                ],
-                            ],
-                        ],
-                        'driver_started' => [
-                            'sequence' => 0,
-                            'color' => 'green',
-                            'events' => [
-                                [
-                                    'if' => [['meta.job_type', '=', 'import']],
-                                    'status' => 'Out port',
-                                    'details' => 'Laden container collected from the port',
-                                    'code' => 'container_collected',
-                                ],
-                                [
-                                    'if' => [['meta.job_type', '=', 'export']],
-                                    'status' => 'Out depot',
-                                    'details' => 'Driver has entered the depot',
-                                    'code' => 'container_collected',
-                                ],
-                                [
-                                    'if' => [['meta.job_type', '=', 'one_way']],
-                                    'status' => 'Container dropped off',
-                                    'details' => 'Driver has delivered the container',
-                                    'code' => 'container_sent',
-                                    'completed' => 1,
-                                ],
-                            ]
-                        ],
-                        'container_collected' => [
-                            'sequence' => 0,
-                            'color' => 'green',
-                            'events' => [
-                                [
-                                    'if' => [['meta.job_type', '=', 'import']],
-                                    'status' => 'With consignee',
-                                    'details' => 'Container with consignee',
-                                    'code' => 'container_unloading',
-                                ],
-                                [
-                                    'if' => [['meta.job_type', '=', 'export']],
-                                    'status' => 'With shipper',
-                                    'details' => 'Container with shipper',
-                                    'code' => 'container_loading',
-                                ],
-                            ]
-                        ],
-                        'container_unloading' => [
-                            'sequence' => 0,
-                            'color' => 'green',
-                            'events' => [
-                                [
-                                    'status' => 'Out consignee',
-                                    'details' => 'Container out of consignee',
-                                    'code' => 'container_returning',
-                                ],
-                            ]
-                        ],
-                        'container_loading' => [
-                            'sequence' => 0,
-                            'color' => 'green',
-                            'events' => [
-                                [
-                                    'status' => 'Out shipper',
-                                    'details' => 'Container out of shipper',
-                                    'code' => 'container_exporting',
-                                ],
-                            ]
-                        ],
-                        'container_returning' => [
-                            'sequence' => 0,
-                            'color' => 'green',
-                            'events' => [
-                                [
-                                    'status' => 'Returned to depot',
-                                    'details' => 'MT container returned to depot',
-                                    'code' => 'container_returned',
-                                    'completed' => 1,
-                                ],
-                            ]
-                        ],
-                        'container_exporting' => [
-                            'sequence' => 0,
-                            'color' => 'green',
-                            'events' => [
-                                [
-                                    'status' => 'In port',
-                                    'details' => 'Laden container sent for export',
-                                    'code' => 'container_sent',
-                                    'completed' => 1,
-                                ],
-                            ]
-                        ],
-                    ],
-                    'entities' => [
-                        [
-                            'name' => '20 FT FLAT RACK',
-                            'type' => 'container',
-                            'description' => '20FR',
-                            'weight' => '16800',
-                            'weight_unit' => 'kg',
-                            'length' => '20',
-                            'width' => '8.6',
-                            'height' => '8.6',
-                            'dimentions_unit' => 'ft',
-                            'meta' => [
-                                'type' => 'FR',
-                            ],
-                        ],
-                        [
-                            'name' => '20 FT X 8\'6',
-                            'type' => 'container',
-                            'description' => '20GP',
-                            'weight' => '16800',
-                            'weight_unit' => 'kg',
-                            'length' => '20',
-                            'width' => '8.6',
-                            'height' => '8.6',
-                            'dimentions_unit' => 'ft',
-                            'meta' => [
-                                'type' => 'GP',
-                            ],
-                        ],
-                        [
-                            'name' => '20 FT X 9\'6',
-                            'type' => 'container',
-                            'description' => '20HC',
-                            'weight' => '16800',
-                            'weight_unit' => 'kg',
-                            'length' => '20',
-                            'width' => '8.6',
-                            'height' => '8.6',
-                            'dimentions_unit' => 'ft',
-                            'meta' => [
-                                'type' => 'HC',
-                            ],
-                        ],
-                        [
-                            'name' => '20 FT X 9\'6',
-                            'type' => 'container',
-                            'description' => '20HR',
-                            'weight' => '16800',
-                            'weight_unit' => 'kg',
-                            'length' => '20',
-                            'width' => '8.6',
-                            'height' => '8.6',
-                            'dimentions_unit' => 'ft',
-                            'meta' => [
-                                'type' => 'HR',
-                            ],
-                        ],
-                        [
-                            'name' => '20 FT X 9\'6',
-                            'type' => 'container',
-                            'description' => '20OH',
-                            'weight' => '16800',
-                            'weight_unit' => 'kg',
-                            'length' => '20',
-                            'width' => '8.6',
-                            'height' => '8.6',
-                            'dimentions_unit' => 'ft',
-                            'meta' => [
-                                'type' => 'OH',
-                            ],
-                        ],
-                        [
-                            'name' => '20 FT X 8\'6',
-                            'type' => 'container',
-                            'description' => '20OT',
-                            'weight' => '16800',
-                            'weight_unit' => 'kg',
-                            'length' => '20',
-                            'width' => '8.6',
-                            'height' => '8.6',
-                            'dimentions_unit' => 'ft',
-                            'meta' => [
-                                'type' => 'OT',
-                            ],
-                        ],
-                        [
-                            'name' => '20 FT X 8\'6',
-                            'type' => 'container',
-                            'description' => '20RF',
-                            'weight' => '16800',
-                            'weight_unit' => 'kg',
-                            'length' => '20',
-                            'width' => '8.6',
-                            'height' => '8.6',
-                            'dimentions_unit' => 'ft',
-                            'meta' => [
-                                'type' => 'RF',
-                            ],
-                        ],
-                        [
-                            'name' => '20 FT X 8\'6',
-                            'type' => 'container',
-                            'description' => '20TK',
-                            'weight' => '16800',
-                            'weight_unit' => 'kg',
-                            'length' => '20',
-                            'width' => '8.6',
-                            'height' => '8.6',
-                            'dimentions_unit' => 'ft',
-                            'meta' => [
-                                'type' => 'TK',
-                            ],
-                        ],
-                        [
-                            'name' => '40 FT X 8\'6',
-                            'type' => 'container',
-                            'description' => '40FR',
-                            'weight' => '16800',
-                            'weight_unit' => 'kg',
-                            'length' => '20',
-                            'width' => '8.6',
-                            'height' => '8.6',
-                            'dimentions_unit' => 'ft',
-                            'meta' => [
-                                'type' => 'FR',
-                            ],
-                        ],
-                        [
-                            'name' => '40 FT X 8\'6',
-                            'type' => 'container',
-                            'description' => '40GP',
-                            'weight' => '16800',
-                            'weight_unit' => 'kg',
-                            'length' => '20',
-                            'width' => '8.6',
-                            'height' => '8.6',
-                            'dimentions_unit' => 'ft',
-                            'meta' => [
-                                'type' => 'GP',
-                            ],
-                        ],
-                        [
-                            'name' => '40 FT X 9\'6',
-                            'type' => 'container',
-                            'description' => '40HC',
-                            'weight' => '16800',
-                            'weight_unit' => 'kg',
-                            'length' => '20',
-                            'width' => '8.6',
-                            'height' => '8.6',
-                            'dimentions_unit' => 'ft',
-                            'meta' => [
-                                'type' => 'HC',
-                            ],
-                        ],
-                        [
-                            'name' => '40 FT X 9\'6',
-                            'type' => 'container',
-                            'description' => '40HF',
-                            'weight' => '16800',
-                            'weight_unit' => 'kg',
-                            'length' => '20',
-                            'width' => '8.6',
-                            'height' => '8.6',
-                            'dimentions_unit' => 'ft',
-                            'meta' => [
-                                'type' => 'FR',
-                            ],
-                        ],
-                        [
-                            'name' => '40 FT X 9\'6',
-                            'type' => 'container',
-                            'description' => '40HR',
-                            'weight' => '16800',
-                            'weight_unit' => 'kg',
-                            'length' => '20',
-                            'width' => '8.6',
-                            'height' => '8.6',
-                            'dimentions_unit' => 'ft',
-                            'meta' => [
-                                'type' => 'RF',
-                            ],
-                        ],
-                        [
-                            'name' => '40 FT X 9\'6',
-                            'type' => 'container',
-                            'description' => '40HT',
-                            'weight' => '16800',
-                            'weight_unit' => 'kg',
-                            'length' => '20',
-                            'width' => '8.6',
-                            'height' => '8.6',
-                            'dimentions_unit' => 'ft',
-                            'meta' => [
-                                'type' => 'HT',
-                            ],
-                        ],
-                        [
-                            'name' => '40 FT X 8\'6',
-                            'type' => 'container',
-                            'description' => '40OT',
-                            'weight' => '16800',
-                            'weight_unit' => 'kg',
-                            'length' => '20',
-                            'width' => '8.6',
-                            'height' => '8.6',
-                            'dimentions_unit' => 'ft',
-                            'meta' => [
-                                'type' => 'OT',
-                            ],
-                        ],
-                        [
-                            'name' => 'PLAT FORM',
-                            'type' => 'container',
-                            'description' => '40PL',
-                            'weight' => '16800',
-                            'weight_unit' => 'kg',
-                            'length' => '20',
-                            'width' => '8.6',
-                            'height' => '8.6',
-                            'dimentions_unit' => 'ft',
-                            'meta' => [
-                                'type' => 'PL',
-                            ],
-                        ],
-                        [
-                            'name' => '40 FT X 8\'6',
-                            'type' => 'container',
-                            'description' => '40RF',
-                            'weight' => '16800',
-                            'weight_unit' => 'kg',
-                            'length' => '20',
-                            'width' => '8.6',
-                            'height' => '8.6',
-                            'dimentions_unit' => 'ft',
-                            'meta' => [
-                                'type' => 'RF',
-                            ],
-                        ],
-                        [
-                            'name' => '45 FT X 9\'611 GENERAL PURPOSE',
-                            'type' => 'container',
-                            'description' => '45GP',
-                            'weight' => '16800',
-                            'weight_unit' => 'kg',
-                            'length' => '20',
-                            'width' => '8.6',
-                            'height' => '8.6',
-                            'dimentions_unit' => 'ft',
-                            'meta' => [
-                                'type' => 'GP',
-                            ],
-                        ],
-                        [
-                            'name' => '45 FT X 9\'611 HIGH CUBE',
-                            'type' => 'container',
-                            'description' => '45HC',
-                            'weight' => '16800',
-                            'weight_unit' => 'kg',
-                            'length' => '20',
-                            'width' => '8.6',
-                            'height' => '8.6',
-                            'dimentions_unit' => 'ft',
-                            'meta' => [
-                                'type' => 'HC',
-                            ],
-                        ],
-                        [
-                            'name' => 'CHASSIS',
-                            'type' => 'container',
-                            'description' => 'CHASSIS',
-                            'weight' => '16800',
-                            'weight_unit' => 'kg',
-                            'length' => '20',
-                            'width' => '8.6',
-                            'height' => '8.6',
-                            'dimentions_unit' => 'ft',
-                            'meta' => [
-                                'type' => 'CHASSIS',
-                            ],
-                        ],
-                    ],
+                    'flow' => $defaultFlow,
                 ],
-            ],
+            ]
         ],
 
         'entity' => [

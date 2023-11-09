@@ -71,12 +71,7 @@ class LiveController extends Controller
      */
     public function orders()
     {
-        $orders = Order::where('company_uuid', session('company'))
-            ->whereHas('payload')
-            ->whereNotIn('status', ['canceled', 'completed'])
-            ->whereNotNull('driver_assigned_uuid')
-            ->whereNull('deleted_at')
-            ->get();
+        $orders = Order::where('company_uuid', session('company'))->get();
 
         return OrderResource::collection($orders);
     }

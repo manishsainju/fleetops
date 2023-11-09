@@ -57,15 +57,6 @@ class PlaceController extends Controller
             }
         }
 
-        // if street1 is the only param
-        if ($request->missing(['name', 'location', 'latititude', 'longitude', 'address']) && $request->isString('street1')) {
-            $place = Place::createFromGeocodingLookup($request->input('street1'));
-
-            if ($place instanceof Place) {
-                $input = $place->toArray();
-            }
-        }
-
         // latitude / longitude
         if ($request->has(['latitude', 'longitude'])) {
             $input['location'] = Utils::getPointFromCoordinates($request->only(['latitude', 'longitude']));
@@ -100,8 +91,7 @@ class PlaceController extends Controller
         /** @var \Fleetbase\Models\Place */
         $place = Place::firstOrNew([
             'company_uuid' => session('company'),
-            'name'         => strtoupper(Utils::or($input, ['name', 'street1'])),
-            'street1'      => strtoupper($input['street1']),
+            'name'         => strtoupper(Utils::or($input, ['name']))
         ]);
 
         // check if missing location
@@ -109,19 +99,6 @@ class PlaceController extends Controller
 
         // fill place with attributes
         $place->fill($input);
-
-        // attempt to find and set latitude and longitude
-        if ($isMissingLocation || $request->missing(['latitude', 'longitude', 'location']) || $place->isMissing('country')) {
-            $geocoded = Geocoder::geocode($place->toAddressString(['name']))
-                ->get()
-                ->first();
-
-            if ($geocoded) {
-                $place->fillWithGoogleAddress($geocoded);
-            } elseif (isset($place->location)) {
-                $place->location = new Point(0, 0);
-            }
-        }
 
         $place->save();
 
