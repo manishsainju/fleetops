@@ -206,15 +206,6 @@ return [
                 'key' => 'food',
                 'meta_type' => 'order_config',
                 'meta' => [
-                    'flow' => $defaultFlow,
-                ],
-            ],
-            [
-                'name' => 'Ecommerce',
-                'description' => 'Operational flow for ondemand ecommerce.',
-                'key' => 'ecommerce',
-                'meta_type' => 'order_config',
-                'meta' => [
                     'fields' => [
                         [
                             'key' => 'customername', 
