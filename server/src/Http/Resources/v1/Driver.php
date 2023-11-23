@@ -22,7 +22,7 @@ class Driver extends FleetbaseResource
             $this->getInternalIds(),
             [
                 'id'                     => $this->when(Http::isInternalRequest(), $this->id, $this->public_id),
-                'uuid'                   => $this->when($this->uuid),
+                'uuid'                   => $this->when(true, $this->uuid),
                 'public_id'              => $this->when(Http::isInternalRequest(), $this->public_id),
                 'internal_id'            => $this->internal_id,
                 'name'                   => $this->name,
