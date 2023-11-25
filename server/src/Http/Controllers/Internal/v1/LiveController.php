@@ -71,7 +71,12 @@ class LiveController extends Controller
      */
     public function orders()
     {
-        $orders = Order::where('company_uuid', session('company'))->get();
+        $orders = Order::where('company_uuid', session('company'))
+        ->whereHas('payload')
+        ->whereNotIn('status', ['canceled', 'completed'])
+        ->whereNotNull('driver_assigned_uuid')
+        ->whereNull('deleted_at')
+        ->get();
 
         return OrderResource::collection($orders);
     }
@@ -84,12 +89,6 @@ class LiveController extends Controller
     public function drivers()
     {
         $drivers = Driver::where(['company_uuid' => session('company'), 'online' => 1])
-            ->whereHas(
-                'currentJob',
-                function ($q) {
-                    $q->whereNotIn('status', ['canceled', 'completed']);
-                }
-            )
             ->get();
 
         return DriverResource::collection($drivers);
