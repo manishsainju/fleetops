@@ -269,17 +269,17 @@ class DriverController extends Controller
             'speed'    => $speed,
         ]);
 
-        if ($isGeocodable) {
-            // attempt to geocode and fill country and city
-            $geocoded = Geocoder::reverse($latitude, $longitude)->get()->first();
+        // if ($isGeocodable) {
+        //     // attempt to geocode and fill country and city
+        //     $geocoded = Geocoder::reverse($latitude, $longitude)->get()->first();
 
-            if ($geocoded) {
-                $driver->update([
-                    'city'    => $geocoded->getLocality(),
-                    'country' => $geocoded->getCountry()->getCode(),
-                ]);
-            }
-        }
+        //     if ($geocoded) {
+        //         $driver->update([
+        //             'city'    => $geocoded->getLocality(),
+        //             'country' => $geocoded->getCountry()->getCode(),
+        //         ]);
+        //     }
+        // }
 
 
         $driver->updatePosition();
