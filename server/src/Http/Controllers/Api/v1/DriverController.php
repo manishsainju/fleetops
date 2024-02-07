@@ -281,7 +281,6 @@ class DriverController extends Controller
             }
         }
 
-        broadcast(new DriverLocationChanged($driver));
 
         $driver->updatePosition();
         $driver->refresh();
