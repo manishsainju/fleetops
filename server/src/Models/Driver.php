@@ -502,42 +502,42 @@ class Driver extends Model
      *
      * @return \Fleetbase\FleetOps\Models\Position|null The created Position object, or null if no new position was created
      */
-    public function updatePosition(Order $order = null): ?Position
-    {
-        $position     = null;
-        $lastPosition = $this->positions()->whereCompanyUuid(session('company'))->latest()->first();
+    // public function updatePosition(Order $order = null): ?Position
+    // {
+    //     $position     = null;
+    //     $lastPosition = $this->positions()->whereCompanyUuid(session('company'))->latest()->first();
 
-        // get the drivers current order
-        $currentOrder = $order ?? $this->currentOrder()->with(['payload'])->first();
-        $destination  = $currentOrder ? $currentOrder->payload->getPickupOrCurrentWaypoint() : null;
+    //     // get the drivers current order
+    //     $currentOrder = $order ?? $this->currentOrder()->with(['payload'])->first();
+    //     $destination  = $currentOrder ? $currentOrder->payload->getPickupOrCurrentWaypoint() : null;
 
-        $positionData = [
-            'company_uuid' => session('company', $this->company_uuid),
-            'subject_uuid' => $this->uuid,
-            'subject_type' => Utils::getMutationType($this),
-            'coordinates'  => $this->location,
-            'altitude'     => $this->altitude,
-            'heading'      => $this->heading,
-            'speed'        => $this->speed,
-        ];
+    //     $positionData = [
+    //         'company_uuid' => session('company', $this->company_uuid),
+    //         'subject_uuid' => $this->uuid,
+    //         'subject_type' => Utils::getMutationType($this),
+    //         'coordinates'  => $this->location,
+    //         'altitude'     => $this->altitude,
+    //         'heading'      => $this->heading,
+    //         'speed'        => $this->speed,
+    //     ];
 
-        if ($currentOrder) {
-            $positionData['order_uuid'] = $currentOrder->uuid;
-        }
+    //     if ($currentOrder) {
+    //         $positionData['order_uuid'] = $currentOrder->uuid;
+    //     }
 
-        if ($destination) {
-            $positionData['destination_uuid'] = $destination->uuid;
-        }
+    //     if ($destination) {
+    //         $positionData['destination_uuid'] = $destination->uuid;
+    //     }
 
-        $isFirstPosition = !$lastPosition;
-        $isPast50Meters  = $lastPosition && FleetOpsUtils::vincentyGreatCircleDistance($this->location, $lastPosition->coordinates) > 50;
-        $position        = null;
+    //     $isFirstPosition = !$lastPosition;
+    //     $isPast50Meters  = $lastPosition && FleetOpsUtils::vincentyGreatCircleDistance($this->location, $lastPosition->coordinates) > 50;
+    //     $position        = null;
 
-        // create the first position
-        if ($isFirstPosition || $isPast50Meters) {
-            $position = Position::create($positionData);
-        }
+    //     // create the first position
+    //     if ($isFirstPosition || $isPast50Meters) {
+    //         $position = Position::create($positionData);
+    //     }
 
-        return $position;
-    }
+    //     return $position;
+    // }
 }

@@ -443,9 +443,9 @@ class Vehicle extends Model
         $position        = null;
 
         // create the first position
-        if ($isFirstPosition || $isPast50Meters) {
-            $position = Position::create($positionData);
-        }
+        // if ($isFirstPosition || $isPast50Meters) {
+        //     $position = Position::create($positionData);
+        // }
 
         return $position;
     }
